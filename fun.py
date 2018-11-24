@@ -11,7 +11,9 @@ async def do_async_sleep(i: str, n: int):
 
 def execution_job(i: str, n: int):
     print("Start exec", i)
-    res = pow(100, n * 10000)
+    k = 0
+    for q in range(n * 1000000):
+        k = k + 1
     print("End exec", i, ':', n)
 
 def input_reader_loop(callback_loop: asyncio.AbstractEventLoop, executor: Executor):
@@ -35,14 +37,14 @@ def input_reader_loop(callback_loop: asyncio.AbstractEventLoop, executor: Execut
 
         if splits[0] == 'x':
             print('Send compute task...', task_number)
-            loop.run_in_executor(executor, execution_job, task_number, n)
+            callback_loop.run_in_executor(executor, execution_job, task_number, n)
             print('Ok')
-        
+
 
 
 if __name__ == "__main__":
     print("Start")
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
-    executor = ThreadPoolExecutor(max_workers=5)
+    executor = ThreadPoolExecutor(max_workers=20)
     loop.run_in_executor(None, input_reader_loop, loop, executor)
     loop.run_forever()
