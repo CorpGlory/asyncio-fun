@@ -11,17 +11,18 @@ async def doit(i: str, s: int):
     return i
 
 
-def app_loop():
+def input_reader_loop(callback_loop: asyncio.AbstractEventLoop):
     task_number = 0
     while True:
         task_number = task_number + 1
         s = int(sys.stdin.readline())
-        asyncio.ensure_future(doit(task_number, s))
+        asyncio.run_coroutine_threadsafe(doit(task_number, s), loop=callback_loop)
+        asyncio.sleep(1)
+        print('Sent task', task_number)
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    print("Ok")
-    print('before')
-    loop.run_until_complete(loop.run_in_executor(None, app_loop))
+    print("Start")
+    loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+    loop.run_until_complete(loop.run_in_executor(None, input_reader_loop, loop))
     print('oops')
