@@ -31,15 +31,18 @@ def input_reader_loop(callback_loop: asyncio.AbstractEventLoop, executor: Execut
         if splits[0] == 's':
             print('Send sleep task...', task_number)
             asyncio.run_coroutine_threadsafe(do_async_sleep(task_number, n), loop=callback_loop)
+            print('Ok')
 
         if splits[0] == 'x':
             print('Send compute task...', task_number)
             loop.run_in_executor(executor, execution_job, task_number, n)
+            print('Ok')
+        
 
 
 if __name__ == "__main__":
     print("Start")
     loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
-    executor = ThreadPoolExecutor(max_workers=None)
-    loop.run_in_executor(executor, input_reader_loop, loop, executor)
+    executor = ThreadPoolExecutor(max_workers=5)
+    loop.run_in_executor(None, input_reader_loop, loop, executor)
     loop.run_forever()
